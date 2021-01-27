@@ -14,8 +14,7 @@ class GuzzleMockResponse
     private $path;
     private $body = [];
     private $headers = [];
-    private $assertion;
-    private $assertRequestJson;
+    private $assertions = [];
     private $once = false;
 
     public function __construct($path)
@@ -59,9 +58,9 @@ class GuzzleMockResponse
         return $this->body;
     }
 
-    public function getAssertion()
+    public function getAssertions()
     {
-        return $this->assertion;
+        return $this->assertions;
     }
 
     public function getAssertRequestJson()
@@ -104,25 +103,47 @@ class GuzzleMockResponse
 
     public function withAssertion(callable $assertion)
     {
-        $this->assertion = $assertion;
+        $this->assertions[] = $assertion;
 
         return $this;
     }
 
     public function assertRequestJson($expectedRequestBody, $key = null)
     {
-        $this->assertRequestJson = function (RequestInterface $request) use ($expectedRequestBody, $key) {
-            $message = 'Failed asserting request bodies matched';
-            $requestBody = json_decode($request->getBody()->getContents(), true);
+        $this->withAssertion(
+            function (RequestInterface $request, ResponseInterface $_) use ($expectedRequestBody, $key) {
+                $message = 'Failed asserting request bodies matched';
+                $requestBody = json_decode($request->getBody()->getContents(), true);
 
-            if (!is_null($key) && array_key_exists($key, $requestBody)) {
-                $requestBody = $requestBody[$key];
+                if (!is_null($key) && array_key_exists($key, $requestBody)) {
+                    $requestBody = $requestBody[$key];
 
-                $message .= ' for key "' . $key  . '"';
+                    $message .= ' for key "' . $key  . '"';
+                }
+
+                Assert::assertEquals($expectedRequestBody, $requestBody, $message);
             }
+        );
 
-            Assert::assertEquals($expectedRequestBody, $requestBody, $message);
-        };
+        return $this;
+    }
+
+    public function assertRequestHeaders($expectedHeaders, $key = null)
+    {
+        $this->withAssertion(
+            function (RequestInterface $request, ResponseInterface $_) use ($expectedHeaders, $key) {
+                $message = 'Failed asserting request headers matched';
+                $requestHeaders = $request->getHeaders();
+
+                if (!is_null($key) && array_key_exists($key, $requestHeaders)) {
+                    $requestHeaders = $requestHeaders[$key];
+
+                    $message .= ' for key "' . $key  . '"';
+                }
+
+                Assert::assertEquals($expectedHeaders, $requestHeaders, $message);
+            }
+        );
 
         return $this;
     }

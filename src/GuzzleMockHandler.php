@@ -3,9 +3,10 @@
 namespace Tomb1n0\GuzzleMockHandler;
 
 use GuzzleHttp\Promise\Create;
-use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\Assert;
+
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class GuzzleMockHandler
 {
@@ -26,8 +27,7 @@ class GuzzleMockHandler
             'method' => strtolower($response->getMethod()),
             'path' => strtolower($response->getPath()),
             'response' => $response->asGuzzleResponse(),
-            'assertion' => $response->getAssertion(),
-            'requestJsonAssertion' => $response->getAssertRequestJson(),
+            'assertions' => $response->getAssertions(),
             'once' => $response->getOnce(),
             'name' => $name
         ];
@@ -77,10 +77,19 @@ class GuzzleMockHandler
         return $response;
     }
 
-    private function rewindRequestAndResponseBodies(RequestInterface $request, Response $response)
+    private function rewindRequestAndResponseBodies(RequestInterface $request, ResponseInterface $response)
     {
         $request->getBody()->rewind();
         $response->getBody()->rewind();
+    }
+
+    private function callAssertions($assertions = [], RequestInterface $request, ResponseInterface $response)
+    {
+        foreach ($assertions as $callback) {
+            $callback($request, $response);
+
+            $this->rewindRequestAndResponseBodies($request, $response);
+        }
     }
 
     public function __invoke(RequestInterface $request, $options = [])
@@ -89,19 +98,9 @@ class GuzzleMockHandler
 
         $guzzleResponse = $response['response'];
 
-        // Call the users assertion method, providing the request and our mocked response
-        if (!empty($response['assertion'])) {
-            $response['assertion']($request, $guzzleResponse);
+        if (!empty($response['assertions'])) {
+            $this->callAssertions($response['assertions'], $request, $guzzleResponse);
         }
-
-        $this->rewindRequestAndResponseBodies($request, $guzzleResponse);
-
-        if (!empty($response['requestJsonAssertion'])) {
-            $response['requestJsonAssertion']($request);
-        }
-
-        $this->rewindRequestAndResponseBodies($request, $guzzleResponse);
-
 
         $this->called[] = $response['name'];
 
