@@ -56,7 +56,7 @@ class GuzzleMockHandler
 
         foreach ($this->responses as $key => $response) {
             if (!is_null($responseKey)) {
-                return;
+                continue;
             }
 
             if ($response['method'] === $method && $response['path'] === $path) {
