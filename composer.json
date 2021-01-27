@@ -1,0 +1,42 @@
+{
+    "name": "tomb1n0/guzzle-mock-handler",
+    "description": "",
+    "keywords": [
+        "tomb1n0",
+        "guzzle-mock-handler"
+    ],
+    "homepage": "https://github.com/tomb1n0/guzzle-mock-handler",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Tom Harper",
+            "email": "tom.harper@rareloop.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "guzzlehttp/guzzle": "^6.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tomb1n0\\GuzzleMockHandler\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tomb1n0\\GuzzleMockHandler\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
