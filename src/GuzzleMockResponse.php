@@ -1,10 +1,11 @@
 <?php
 
-namespace App;
+namespace Tomb1n0\GuzzleMockHandler;
 
 use PHPUnit\Framework\Assert;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class GuzzleMockResponse
 {

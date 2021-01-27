@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace Tomb1n0\GuzzleMockHandler;
 
 use GuzzleHttp\Promise\Create;
 use GuzzleHttp\Psr7\Response;
