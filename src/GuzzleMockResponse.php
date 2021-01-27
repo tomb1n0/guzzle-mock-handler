@@ -111,7 +111,7 @@ class GuzzleMockResponse
     public function assertRequestJson($expectedRequestBody, $key = null)
     {
         $this->withAssertion(
-            function (RequestInterface $request, ResponseInterface $_) use ($expectedRequestBody, $key) {
+            function (RequestInterface $request, ResponseInterface $_, $options = []) use ($expectedRequestBody, $key) {
                 $message = 'Failed asserting request bodies matched';
                 $requestBody = json_decode($request->getBody()->getContents(), true);
 
@@ -131,7 +131,7 @@ class GuzzleMockResponse
     public function assertRequestHeaders($expectedHeaders, $key = null)
     {
         $this->withAssertion(
-            function (RequestInterface $request, ResponseInterface $_) use ($expectedHeaders, $key) {
+            function (RequestInterface $request, ResponseInterface $_, $options = []) use ($expectedHeaders, $key) {
                 $message = 'Failed asserting request headers matched';
                 $requestHeaders = $request->getHeaders();
 

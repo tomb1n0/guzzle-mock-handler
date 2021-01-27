@@ -83,10 +83,10 @@ class GuzzleMockHandler
         $response->getBody()->rewind();
     }
 
-    private function callAssertions($assertions = [], RequestInterface $request, ResponseInterface $response)
+    private function callAssertions($assertions = [], RequestInterface $request, ResponseInterface $response, $options = [])
     {
         foreach ($assertions as $callback) {
-            $callback($request, $response);
+            $callback($request, $response, $options);
 
             $this->rewindRequestAndResponseBodies($request, $response);
         }
@@ -99,8 +99,11 @@ class GuzzleMockHandler
         $guzzleResponse = $response['response'];
 
         if (!empty($response['assertions'])) {
-            $this->callAssertions($response['assertions'], $request, $guzzleResponse);
+            $this->callAssertions($response['assertions'], $request, $guzzleResponse, $options);
         }
+
+        // Rewind anyway, as a last resort before we send the response back 
+        $this->rewindRequestAndResponseBodies($request, $guzzleResponse);
 
         $this->called[] = $response['name'];
 
