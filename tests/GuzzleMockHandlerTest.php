@@ -40,5 +40,41 @@ class GuzzleMockHandlerTest extends TestCase
                 'password' => ''
             ]
         ]);
+        $this->assertTrue(true);
+    }
+
+    /** @test */
+    public function works_as_expected_with_param()
+    {
+        $handler = new GuzzleMockHandler();
+
+        $handler->expect(
+            (new GuzzleMockResponse('account/signin/{id}'))
+                ->where('id', '.*')
+                ->once()
+                ->withStatus(200)
+                ->withMethod('post')
+                ->withBody([
+                    'accessToken' => 'access_token1',
+                    'expiry' => '2021-12-03T20:17:32.8811472Z',
+                ])
+                ->assertRequestJson([
+                    'userName' => '',
+                    'password' => ''
+                ]),
+            'sign-in'
+        );
+
+        $stack = HandlerStack::create($handler);
+        $guzzle = new Client(['handler' => $stack]);
+
+        $guzzle->post('account/signin/1', [
+            'json' => [
+                'userName' => '',
+                'password' => ''
+            ]
+        ]);
+
+        $this->assertTrue(true);
     }
 }

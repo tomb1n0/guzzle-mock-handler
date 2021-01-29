@@ -14,6 +14,7 @@ class GuzzleMockResponse
     private $path;
     private $body = [];
     private $headers = [];
+    private $wheres = [];
     private $assertions = [];
     private $once = false;
 
@@ -31,6 +32,13 @@ class GuzzleMockResponse
             $this->getHeaders(),
             $this->getBody()
         );
+    }
+
+    public function where($key, $regex)
+    {
+        $this->wheres[] = new PathWhere($key, $regex, $this->getPath());
+
+        return $this;
     }
 
     public function getMethod()
@@ -106,6 +114,44 @@ class GuzzleMockResponse
         $this->assertions[] = $assertion;
 
         return $this;
+    }
+
+    public function getWheres()
+    {
+        return $this->wheres;
+    }
+
+    public function matches(RequestInterface $request)
+    {
+        if (strtolower($request->getMethod()) !== strtolower($this->getMethod())) {
+            return false;
+        }
+
+        $requestPath = $request->getUri()->getPath();
+        if ($requestPath === $this->getPath()) {
+            return true;
+        }
+
+        $pathWithoutVariables = $this->getPath();
+        $requestPathWithoutVariables = $requestPath;
+
+        $matches = [];
+        foreach ($this->wheres as $where) {
+            $pathWithoutVariables = $where->replaceWhereInPath($pathWithoutVariables);
+            $requestPathWithoutVariables = $where->replaceWhereInPath($requestPathWithoutVariables);
+
+            if ($where->matches($requestPath)) {
+                $matches[] = true;
+            }
+        }
+
+        // Check that we have enough matches and
+        // check that the rest of our paths match as well.
+        if (count($matches) === count($this->getWheres()) && $pathWithoutVariables === $requestPathWithoutVariables) {
+            return true;
+        }
+
+        return false;
     }
 
     public function assertRequestJson($expectedRequestBody, $key = null)
