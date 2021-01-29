@@ -37,9 +37,10 @@ class PathWhere
     {
         $segment = $this->getSegmentFromPath($path);
 
-        preg_match('/' . $this->regex . '/', $segment, $matches);
+        $regEx = '/' . $this->regex . '/';
+        $match = preg_match($regEx, $segment, $matches);
 
-        return count($matches) > 0;
+        return $match && count($matches) > 0 && strlen($matches[0]) > 0;
     }
 
     public function replaceWhereInPath($path)
