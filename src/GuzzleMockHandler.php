@@ -24,11 +24,7 @@ class GuzzleMockHandler
         $name = $name ?? 'response-' . (count($this->responses) + 1);
 
         $this->responses[] = [
-            'method' => strtolower($response->getMethod()),
-            'path' => strtolower($response->getPath()),
-            'response' => $response->asGuzzleResponse(),
-            'assertions' => $response->getAssertions(),
-            'once' => $response->getOnce(),
+            'mock' => $response,
             'name' => $name
         ];
     }
@@ -59,7 +55,7 @@ class GuzzleMockHandler
                 continue;
             }
 
-            if ($response['method'] === $method && $response['path'] === $path) {
+            if ($response['mock']->matches($request)) {
                 $responseKey = $key;
             }
         }
@@ -70,7 +66,7 @@ class GuzzleMockHandler
 
         $response = $this->responses[$responseKey];
 
-        if (!empty($response['once'])) {
+        if ($response['mock']->getOnce()) {
             unset($this->responses[$responseKey]);
         }
 
@@ -96,13 +92,13 @@ class GuzzleMockHandler
     {
         $response = $this->getResponse($request);
 
-        $guzzleResponse = $response['response'];
+        $guzzleResponse = $response['mock']->asGuzzleResponse();
 
         if (!empty($response['assertions'])) {
-            $this->callAssertions($response['assertions'], $request, $guzzleResponse, $options);
+            $this->callAssertions($response['mock']->getAssertions(), $request, $guzzleResponse, $options);
         }
 
-        // Rewind anyway, as a last resort before we send the response back 
+        // Rewind anyway, as a last resort before we send the response back
         $this->rewindRequestAndResponseBodies($request, $guzzleResponse);
 
         $this->called[] = $response['name'];
