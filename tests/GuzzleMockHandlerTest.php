@@ -13,6 +13,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Tomb1n0\GuzzleMockHandler\GuzzleMockHandler;
 use Tomb1n0\GuzzleMockHandler\GuzzleMockResponse;
+use Tomb1n0\GuzzleMockHandler\ResponseNotFound;
 
 class GuzzleMockHandlerTest extends TestCase
 {
@@ -215,8 +216,8 @@ class GuzzleMockHandlerTest extends TestCase
         $response = $guzzle->get('/users/1');
         $this->assertSame(200, $response->getStatusCode());
 
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('No response set for get => /products/2');
+        $this->expectException(ResponseNotFound::class);
+        $this->expectExceptionMessage('No response found for get => /products/2');
 
         $response = $guzzle->get('/products/2');
         $this->assertSame(200, $response->getStatusCode());
@@ -233,8 +234,8 @@ class GuzzleMockHandlerTest extends TestCase
         $stack = HandlerStack::create($handler);
         $guzzle = new Client(['handler' => $stack]);
 
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('No response set for post => /get');
+        $this->expectException(ResponseNotFound::class);
+        $this->expectExceptionMessage('No response found for post => /get');
 
         $guzzle->post('/get');
     }
@@ -251,8 +252,8 @@ class GuzzleMockHandlerTest extends TestCase
 
         $guzzle->get('/get');
 
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('No response set for get => /get');
+        $this->expectException(ResponseNotFound::class);
+        $this->expectExceptionMessage('No response found for get => /get');
 
         $guzzle->get('/get');
 

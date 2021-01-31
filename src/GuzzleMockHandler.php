@@ -8,6 +8,10 @@ use PHPUnit\Framework\Assert;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
+class ResponseNotFound extends \Exception
+{
+};
+
 class GuzzleMockHandler
 {
     private $responses;
@@ -61,7 +65,7 @@ class GuzzleMockHandler
         }
 
         if (is_null($responseKey)) {
-            throw new \Exception('No response set for ' . $method . ' => ' . $path);
+            throw new ResponseNotFound('No response found for ' . $method . ' => ' . $path);
         }
 
         $response = $this->responses[$responseKey];
