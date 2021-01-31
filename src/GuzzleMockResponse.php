@@ -71,11 +71,6 @@ class GuzzleMockResponse
         return $this->assertions;
     }
 
-    public function getAssertRequestJson()
-    {
-        return $this->assertRequestJson;
-    }
-
     public function getOnce()
     {
         return $this->once;
@@ -104,7 +99,7 @@ class GuzzleMockResponse
 
     public function withHeaders($headers = [])
     {
-        $this->headers = $headers;
+        $this->headers = array_merge($this->headers, $headers);
 
         return $this;
     }

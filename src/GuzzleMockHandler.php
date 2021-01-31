@@ -92,13 +92,13 @@ class GuzzleMockHandler
     {
         $response = $this->getResponse($request);
 
-        $guzzleResponse = $response['mock']->asGuzzleResponse();
+        $mockResponse = $response['mock'];
+        $guzzleResponse = $mockResponse->asGuzzleResponse();
 
-        if (!empty($response['assertions'])) {
-            $this->callAssertions($response['mock']->getAssertions(), $request, $guzzleResponse, $options);
+        if (!empty($mockResponse->getAssertions())) {
+            $this->callAssertions($mockResponse->getAssertions(), $request, $guzzleResponse, $options);
         }
 
-        // Rewind anyway, as a last resort before we send the response back
         $this->rewindRequestAndResponseBodies($request, $guzzleResponse);
 
         $this->called[] = $response['name'];
