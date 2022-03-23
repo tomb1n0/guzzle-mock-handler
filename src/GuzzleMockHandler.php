@@ -2,8 +2,8 @@
 
 namespace Tomb1n0\GuzzleMockHandler;
 
-use GuzzleHttp\Promise\Create;
 use PHPUnit\Framework\Assert;
+use GuzzleHttp\Promise\Create;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -83,7 +83,7 @@ class GuzzleMockHandler
         $response->getBody()->rewind();
     }
 
-    private function callAssertions($assertions = [], RequestInterface $request, ResponseInterface $response, $options = [])
+    private function callAssertions($assertions, RequestInterface $request, ResponseInterface $response, $options = [])
     {
         foreach ($assertions as $callback) {
             $callback($request, $response, $options);
