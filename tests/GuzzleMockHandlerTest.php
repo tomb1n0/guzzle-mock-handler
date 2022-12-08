@@ -450,4 +450,15 @@ class GuzzleMockHandlerTest extends TestCase
 
         $this->assertTrue($responseMock->matches($request));
     }
+
+    /** @test */
+    public function test_exact_path_match_returns_true()
+    {
+        $responseMock = new GuzzleMockResponse('https://example.com/api/foo');
+
+        $request = new Request('GET', 'https://example.com/api/foo');
+
+        $this->assertTrue($responseMock->matches($request));
+    }
+    
 }

@@ -122,6 +122,15 @@ class GuzzleMockResponse
             return false;
         }
 
+        /**
+         * Does the URL completely match our path?
+         * 
+         * This is useful if you want to mock a response for a different URL than the base one.
+         */
+        if ((string) $request->getUri() === $this->path) {
+            return true;
+        }
+
         $requestPath = $request->getUri()->getPath();
         if ($requestPath === $this->getPath()) {
             return true;
