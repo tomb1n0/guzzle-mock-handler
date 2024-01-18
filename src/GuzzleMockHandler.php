@@ -51,7 +51,6 @@ class GuzzleMockHandler
     private function getResponse(RequestInterface $request)
     {
         $method = strtolower($request->getMethod());
-        $path = strtolower($request->getUri()->getPath());
         $responseKey = null;
 
         foreach ($this->responses as $key => $response) {
@@ -65,7 +64,7 @@ class GuzzleMockHandler
         }
 
         if (is_null($responseKey)) {
-            throw new ResponseNotFound('No response found for ' . $method . ' => ' . $path);
+            throw new ResponseNotFound('No response found for ' . $method . ' => ' . $request->getUri()->getPath());
         }
 
         $response = $this->responses[$responseKey];
