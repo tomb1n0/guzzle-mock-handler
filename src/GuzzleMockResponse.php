@@ -25,6 +25,11 @@ class GuzzleMockResponse
         $this->headers = ['Content-Type' => 'application/json'];
     }
 
+    public static function make($path): static
+    {
+        return new static($path);
+    }
+
     public function asGuzzleResponse()
     {
         return new Response(

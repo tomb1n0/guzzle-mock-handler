@@ -23,6 +23,22 @@ class GuzzleMockResponseTest extends TestCase
     }
 
     /** @test */
+    public function can_be_constructed_with_static_make_function()
+    {
+        $response = GuzzleMockResponse::make('/login');
+
+        $this->assertEquals('get', $response->getMethod());
+        $this->assertEquals(['Content-Type' => 'application/json'], $response->getHeaders());
+        $this->assertEquals(200, $response->getStatus());
+        $this->assertEquals('/login', $response->getPath());
+        $this->assertEquals(json_encode([]), $response->getBody());
+        $this->assertEquals([], $response->getAssertions());
+        $this->assertEquals(null, $response->getOnce());
+        $this->assertEquals([], $response->getWheres());
+    }
+
+
+    /** @test */
     public function setters_work()
     {
         $response = new GuzzleMockResponse('/login');
