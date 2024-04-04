@@ -361,6 +361,19 @@ class GuzzleMockHandlerTest extends TestCase
     }
 
     /** @test */
+    public function it_can_assert_query_parameters_match()
+    {
+        $handler = new GuzzleMockHandler;
+        $response = (new GuzzleMockResponse('dave/doug'))->assertRequestQueryParameters(['foo' => 'bar']);
+        $handler->expect($response);
+
+        $stack = HandlerStack::create($handler);
+        $guzzle = new Client(['handler' => $stack]);
+
+        $guzzle->get('dave/doug', ['query' => ['foo' => 'bar']]);
+    }
+
+    /** @test */
     public function match_fails_if_method_is_wrong()
     {
         $responseMock = new GuzzleMockResponse('dave/doug');
@@ -460,5 +473,4 @@ class GuzzleMockHandlerTest extends TestCase
 
         $this->assertTrue($responseMock->matches($request));
     }
-    
 }

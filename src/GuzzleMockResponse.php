@@ -116,6 +116,17 @@ class GuzzleMockResponse
         return $this;
     }
 
+    public function assertRequestQueryParameters(array $queryParameters)
+    {
+        $this->assertions[] = function (RequestInterface $request, ResponseInterface $response) use ($queryParameters) {
+            parse_str($request->getUri()->getQuery(), $passedQueryParameters);
+
+            Assert::assertEquals($queryParameters, $passedQueryParameters);
+        };
+
+        return $this;
+    }
+
     public function getWheres()
     {
         return $this->wheres;
