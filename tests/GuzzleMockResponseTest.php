@@ -3,6 +3,7 @@
 namespace Tomb1n0\GuzzleMockHandler\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Tomb1n0\GuzzleMockHandler\GuzzleMockHandler;
 use Tomb1n0\GuzzleMockHandler\GuzzleMockResponse;
 
 class GuzzleMockResponseTest extends TestCase
@@ -67,5 +68,19 @@ class GuzzleMockResponseTest extends TestCase
 
         $response->assertRequestHeaders(['foo' => 'bar']);
         $this->assertCount(3, $response->getAssertions());
+    }
+
+    /** @test */
+    public function uses_macroable()
+    {
+        GuzzleMockResponse::macro('customMethod', function () {
+            return 'Hello from custom method';
+        });
+
+        $this->assertSame('Hello from custom method', GuzzleMockResponse::customMethod());
+
+        $response = GuzzleMockResponse::make('foo');
+
+        $this->assertSame('Hello from custom method', $response->customMethod());
     }
 }

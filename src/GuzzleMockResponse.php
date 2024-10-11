@@ -6,9 +6,12 @@ use PHPUnit\Framework\Assert;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Spatie\Macroable\Macroable;
 
 class GuzzleMockResponse
 {
+    use Macroable;
+
     private $method = 'get';
     private $status = 200;
     private $path;
@@ -140,7 +143,7 @@ class GuzzleMockResponse
 
         /**
          * Does the URL completely match our path?
-         * 
+         *
          * This is useful if you want to mock a response for a different URL than the base one.
          */
         if ((string) $request->getUri() === $this->path) {
